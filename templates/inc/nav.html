@@ -1,0 +1,28 @@
+{% load search_tag %}
+<nav>
+  <style>
+    .component {
+      font-size: 20px;
+    }
+  </style>
+
+  <div class="nav-wrapper container">
+    <a href="/" class="brand-logo">BBTogether</a>
+    <ul id="nav-mobile" class="right hide-on-med-and-down">
+      <div class="">
+        <li><a class="component" href="{% url 'books_for_buy_list' %}">BFBuy</a></li>
+        <li><a class="component" href="{% url 'books_for_free_list' %}">BFFree</a></li>
+        <li><a class="component" href="{% url 'reviews' %}">Reviews</a></li>
+        <li><a class="component" href="{% url 'feedback' %}">Feedback</a></li>
+        {% if user.is_authenticated %}
+          <li><a class="component" href="{% url 'profile' user.pk %}">Profile</a></li>
+          <li><a class="component" href="{% url 'logout' %}">Exit</a></li>
+        {% else %}
+          <li><a class="component" href="{% url 'account_login' %}">Login</a></li>
+          <li><a class="component" href="{% url 'account_signup' %}">Register</a></li>
+        {% endif %}
+        <li>{% search_form %}</li>
+      </div>
+    </ul>
+  </div>
+</nav>

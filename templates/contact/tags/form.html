@@ -1,0 +1,5 @@
+<form action="{% url 'contact' %}" method="POST">
+  {% csrf_token %}
+  {{ contact_form }}
+  <button class="waves-effect waves-light btn white-text">Follow</button>
+</form>

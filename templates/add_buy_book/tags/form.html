@@ -1,0 +1,7 @@
+
+<form method="POST" action="{% url 'add_buy_book' %}" enctype="multipart/form-data" style="display: flex; flex-direction: column;">{% csrf_token %}
+  <div style="display: flex; flex-direction: column; padding: 0px 5px;">
+    {{ books_for_buy_form.as_p }}
+  </div>
+    <button type="submit" class="waves-effect waves-light btn white-text" style="width: 70px;">Add</button>
+  </form>

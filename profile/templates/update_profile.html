@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Update profile
+{% endblock title %}
+
+
+{% block content %}
+{% if client.pk == user.pk %}
+
+  
+<style>
+  .photo > img {
+    max-width: 400px;
+    max-height: 300px;
+    width: 400px;
+    height: 300px;
+    min-width: 100px;
+    min-height: 200px;
+  }
+</style>
+
+<form action="{% url 'update_profile' client.pk %}" method="POST" enctype="multipart/form-data" style="height: 68vh;"> {% csrf_token %}
+  <div style="background-color: rgb(250, 250, 250); border-radius: 10px; margin-top: 10px; display: flex; flex-direction: row; justify-content: flex-start;">
+    <div>
+      <div class="photo">
+        {% if client.photo %}
+          <img src="{{ client.photo.url }}" alt="">
+        {% else %}
+          <img src="https://www.kindpng.com/picc/m/236-2362818_anime-sempai-animegirl-heart-kawaii-cute-anime-girl.png">
+        {% endif %}
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; margin: 5px 0 0 10px; justify-content: space-between;">
+      <div>
+        <div style="font-size: 22px;">
+          {% if client.full_name %}
+          <label for="full_name">Name:</label>
+            <input type="text" name="full_name" value="{{ client.full_name }}">
+          {% endif %}
+        </div>
+        <div style="font-size: 22px;">
+          <label for="username">Username:</label>
+            <input type="text" name="username" value="{{ client.username }}">
+        </div>
+        {% if not client.age %}
+          <label for="age">Birthday:</label>
+          <input type="date" name="age">
+        {% else %}
+          Current birthday: {{ client.age }}
+          <input type="date" name="age">
+        {% endif %}
+
+        <label for="photo">Photo: </label>
+        <input type="file" name="photo" id="photo">
+      </div>
+      {% if user.pk == client.pk %}
+      <div class="buttons" style="margin-bottom: 8px; margin-top: 25px;">
+        <button class="waves-effect waves-light btn" type="submit">Change</button>
+        <a class="waves-effect waves-light btn" href="{% url 'account_reset_password' %}">Reset password</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  {% if messages %}
+  {% for message in messages %}
+    {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+      <div class="card-panel teal accent-3">
+        {{ message }}
+      </div>
+    {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+    <div class="card-panel lime lighten-1">
+      {{ message }}
+    </div>
+    {% else %}
+      <div class="card-panel red">
+        {{ message }}
+      </div>
+    {% endif %}
+  {% endfor %}
+{% endif %}
+</form>
+{% endif %}
+{% endblock content %}

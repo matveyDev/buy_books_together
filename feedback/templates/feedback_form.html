@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Feedback
+{% endblock title %}
+
+{% block content %}
+  <form method="POST" style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 69vh;">{% csrf_token %}
+    <div style="max-width: 600px; background-color: rgb(250, 250, 250); border-radius: 20px;">
+      {% if messages %}
+        {% for message in messages %}
+          {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+            <div class="card-panel teal accent-3">
+              {{ message }}
+            </div>
+          {% else %}
+            <div class="card-panel red darken-4">
+              {{ message }}
+            </div>
+          {% endif %}
+        {% endfor %}
+      {% endif %}
+        <div class="row">
+          <div class="input-field col s12">
+            <input name="email" id="email" type="email" class="validate">
+            <label for="email">Email</label>
+          </div>
+          <div class="input-field col s12">
+            <textarea name="text" id="text" class="materialize-textarea"></textarea>
+            <label for="textarea1">Text</label>
+          </div>
+          <button style="margin-left: 7px;" class="btn waves-effect waves-light" type="submit" name="action">Send
+            <i class="material-icons right">send</i>
+          </button>
+        </div>
+    </div>
+  </form>
+{% endblock content %}

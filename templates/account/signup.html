@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% load i18n %}
+
+{% block head_title %}{% trans "Signup" %}{% endblock %}
+
+{% block content %}
+<div style="border-radius: 5px; background-color: rgb(250, 250, 250); padding: 0 0 1px 10px;">
+<h1>{% trans "Sign Up" %}</h1>
+
+<p>{% blocktrans %}Already have an account? Then please <a href="{{ login_url }}">sign in</a>.{% endblocktrans %}</p>
+
+<form class="signup" id="signup_form" method="post" action="{% url 'account_signup' %}">
+  {% csrf_token %}
+
+  <label for="email">Email:</label>
+  <input type="email" name="email" id="email">
+
+  <label for="username">Login:</label>
+  <input type="text" name="username" id="username">
+
+  <label for="password1">Password 1:</label>
+  <input type="password" name="password1" id="password1">
+
+  <label for="email">Password 2:</label>
+  <input type="password" name="password2" id="password2">
+
+  <label for="full_name">FULL name:</label>
+  <input type="text" name="full_name" id="full_name">
+  
+  {% if redirect_field_value %}
+  <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+  {% endif %}
+  <p></p>
+  <button class="waves-effect waves-light btn-large" type="submit"><i class="material-icons right">cloud</i>{% trans "Sign Up" %}</button>
+  <div class="socialaccount_ballot">
+    <ul class="socialaccount_providers" style="display: flex; justify-content: center;">
+      <li>{% include "socialaccount/snippets/provider_list.html" with process="login" %}</li>
+    </ul>
+  </div>
+</form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}
+  Profile
+{% endblock title %}
+
+
+{% block content %}
+{% load add_books %}
+<style>
+  .photo > img {
+    max-width: 400px;
+    max-height: 300px;
+    width: 400px;
+    height: 300px;
+    min-width: 100px;
+    min-height: 200px;
+  }
+</style>
+  <div style="background-color: rgb(250, 250, 250); border-radius: 10px; margin-top: 10px; display: flex; flex-direction: row; justify-content:flex-start;" class="card-custom">
+    <div>
+      <div class="photo">
+        {% if client.photo %}
+          <img src="{{ client.photo.url }}" alt="">
+        {% else %}
+          <img src="https://www.kindpng.com/picc/m/236-2362818_anime-sempai-animegirl-heart-kawaii-cute-anime-girl.png">
+        {% endif %}
+      </div>
+    </div>
+    <div style="display: flex; flex-direction: column; margin: 5px 0 0 10px; justify-content: space-between;">
+      <div>
+        <div style="font-size: 22px;" class="name">
+          {% if client.full_name  %}
+            {{ client.full_name }}
+          {% else %}
+            {{ client.username }}
+          {% endif %}
+        </div>
+        <div class="rating" style="font-size: 19px; display: flex;">
+          Rating: {{ client.rating }} 
+          {% if client.rating >= 100 %}
+            <img width="25" src="../../static/icons/icons8-fire-24.png">
+          {% endif %}
+        </div>
+        <div class="email" style="font-size: 17px;">
+          {% if client.id == user.id %}
+            Email: {{ client.email }}
+          {% endif %}
+        </div>
+        <div class="subscriber" style="font-size: 17px;">
+          {% if client.subscriber == True %}
+            Follow on mailing
+          {% else %}
+            Don`t follow on mailing
+          {% endif %}
+        </div>
+        <div class="buy_books" style="font-size: 17px;">
+          {% if client.books_for_buy.all %}
+          Invested in:
+            {% for book in client.books_for_buy.all %}
+              <a href="{{ book.get_absolute_url }}">{{ book }};</a>
+            {% endfor %}
+          {% endif %}
+        </div>
+        <div class="buy_books" style="font-size: 17px;">
+          {% if client.books_for_free.all %}
+          Added books:
+            {% for book in client.books_for_free.all %}
+              <a href="{{ book.get_absolute_url }}">{{ book }};</a>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </div>
+      {% if user.pk == client.pk %}
+      <div class="buttons" style="margin-bottom: 8px;">
+        <a class="waves-effect waves-light btn" href="{% url 'account_reset_password' %}">Reset password</a>
+        <a class="waves-effect waves-light btn" href="{% url 'update_profile' client.id %}">Update profile</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if user.pk == client.pk %}
+    <br>
+    <hr style="width: 80%;">
+    <br>
+    {% if messages %}
+    {% for message in messages %}
+      {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+        <div class="card-panel teal accent-3">
+          {{ message }}
+        </div>
+      {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %}
+      <div class="card-panel lime lighten-1">
+        {{ message }}
+      </div>
+      {% else %}
+        <div class="card-panel red">
+          {{ message }}
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  <div style="display: flex; flex-direction: row;">
+    <div style="width: 49%; background-color: rgb(250, 250, 250); border-radius: 5px;">
+      <h3>Add Free book</h3>
+      {% add_free_book_form %}
+    </div>
+    <div style="width: 2%;"></div>
+    <div style="width: 49%; background-color: rgb(250, 250, 250); border-radius: 5px;">
+      <h3>Add Buying book</h3>
+      {% add_buy_book_form %}
+    </div>
+  </div>
+    {% endif %}
+
+
+
+  {% if client.reviews.all %}
+    <div style="border-radius: 5px; background-color: rgb(250, 250, 250);">
+      <h2>User reviews</h2>
+      {% for review in client.reviews.all %}
+        <div class="row">
+          <div class="col s12 m12">
+            <div class="card teal lighten-2">
+              <div class="card-content white-text">
+                <span class="card-title">
+                  <a 
+                    class="author"
+                    href="{{ review.author.get_absolute_url }}"
+                    style="color: white; text-decoration: underline;"
+                  >
+                    {{ review.author }}
+                  </a>:
+                </span>
+                <p style="font-size: 19px;">{{ review.text }}</p>
+              </div>
+              <div class="card-action">
+                <a href="{{ review.book.get_absolute_url }}">{{ review.book }}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+{% if client.id != user.id %}
+  <div class="padding" style="margin-top: 395px;"></div>
+
+  <script>
+    let padding = document.querySelector('.padding')
+    let card = document.querySelector('.card-custom')
+    let cardHeight = card.offsetHeight
+    let empty = 395 + 306
+    
+    if (cardHeight < empty) {
+      box.style.marginTop = `${empty - cardHeight}px`
+    }
+  </script>
+{% endif %}
+
+{% endblock content %}

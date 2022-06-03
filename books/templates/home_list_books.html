@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% if messages %}
+{% for message in messages %}
+  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+    <div class="card-panel teal accent-3">
+      {{ message }}
+    </div>
+  {% else %}
+  <div class="card-panel red darken-4">
+    {{ message }}
+  </div>
+  {% endif %}
+{% endfor %}
+{% endif %}
+
+<style>
+  .welcome-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    border-radius: 10px;
+    background-color: rgb(250, 250, 250);
+  }
+  .title {
+    color: #eb2d2a;
+    line-height: 20px;
+  }
+  .text {
+    padding-bottom: 7px;
+    font-size: 20px;
+  }
+</style>
+
+<div class="welcome-box">
+  <h2 class="title">Welcome!</h2>
+  <span class="text">This is my friendly project, which you can add new books on site.</span>
+  <span class="text">Hopefully, someone will found that they need =)</span>
+  <div class="">
+    <a target="_blank" href="https://vk.com/wannafckingdie"><img src="../../static/icons/icons8-vk.com-48.png" alt="VK"></a>
+    <a target="_blank" href="https://github.com/matvey-dev"><img src="../../static/icons/icons8-git-48.png" alt="Git"></a>
+  </div>
+</div>
+
+<br>
+<div style="border-radius: 5px; background-color: rgb(250, 250, 250);">
+  <h4 style="padding-left: 5px; color: #e53935;">Most popular books</h4>
+    <div style="border-radius: 5px;">
+      <h6 style="padding-left: 5px;">FREE</h6>
+      <div class="row" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        {% for book in popular_free %}
+          <div class="col">
+            <div class="card" style="width: 296px; height: 480px;">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="{{ book.image.url }}" style="max-width: 350px; height: 360px;">
+              </div>
+              <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">{{ book.title }}</span>
+                <a class="waves-effect waves-light btn" href="{{ book.get_absolute_url }}">View detail</a>
+              </div>
+              <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Short description:<i class="material-icons right">&#10006;</i></span>
+                <p>{{ book.description|truncatewords:50 }}...</p>
+                <p>Category: {{ book.category }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+        </div>
+    </div>
+    <br>
+    <div style="border-radius: 5px;">
+      <h6 style="padding-left: 5px;">For Buy</h6>
+      <div class="row" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        {% for book in popular_buy %}
+        <div class="col">
+          <div class="card" style="width: 296px; height: 500px;">
+            <div class="card-image waves-effect waves-block waves-light">
+              <img class="activator" src="{{ book.image.url }}" style="max-width: 350px; height: 360px;">
+            </div>
+            <div class="card-content">
+              <span class="card-title activator grey-text text-darken-4">{{ book.title }}</span>
+              <h6>Goal: {{ book.current_goal }}/{{ book.finish_goal }} RUB</h6>
+              <a class="waves-effect waves-light btn" href="{{ book.get_absolute_url }}">View detail</a>
+            </div>
+            <div class="card-reveal">
+              <span class="card-title grey-text text-darken-4">Short description:<i class="material-icons right">&#10006;</i></span>
+              <p>{{ book.description|truncatewords:50 }}...</p>
+              <p>Category: {{ book.category }}</p>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+        </div>
+    </div>
+</div>
+<br>
+{% if books %}
+<div style="border-radius: 5px; background-color: rgb(250, 250, 250);">
+  <h4 style="padding-left: 5px; color: #e53935;">Last month goals</h4>
+    <div class="row" style="display: flex; flex-direction: row; flex-wrap: wrap; justify-content: center;">
+        {% for book in books %}
+          <div class="col">
+            <div class="card" style="width: 296px; height: 500px;">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="{{ book.image.url }}" style="max-width: 350px; height: 360px;">
+              </div>
+              <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">{{ book.title }}</span>
+                <h6>Goal: {{ book.current_goal }}/{{ book.finish_goal }} RUB</h6>
+                <a class="waves-effect waves-light btn" href="{{ book.get_absolute_url }}">View detail</a>
+              </div>
+              <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Short description:<i class="material-icons right">&#10006;</i></span>
+                <p>{{ book.description|truncatewords:50 }}...</p>
+                <p>Category: {{ book.category }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+{% endblock content %}

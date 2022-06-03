@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ title }}
+{% endblock title %}
+
+{% block content %}
+<link rel="stylesheet" href="../../static/css/materialize.min.css">
+<div style="display: flex; flex-direction: column; border-radius: 5px; margin-top: 26px; background-color: rgb(250, 250, 250);">
+  <a href="{% url 'books_for_buy_list' %}" class="btn waves-effect waves-light" style="width: 50px; margin: 5px 0 2px 5px;"><i class="material-icons left">arrow_back</i></a>
+  <h4 style="padding-left: 5px; color: #e53935; line-height: 0px; padding-bottom: 10px; align-self: center;">{{ title }}</h4>
+    <div class="row">
+        {% for book in books %}
+          <div class="col">
+            <div class="card" style="width: 296px; height: 500px;">
+              <div class="card-image waves-effect waves-block waves-light">
+                <img class="activator" src="{{ book.image.url }}" style="max-width: 350px; height: 360px;">
+              </div>
+              <div class="card-content">
+                <span class="card-title activator grey-text text-darken-4">{{ book.title }}</span>
+                <h6>Goal: {{ book.current_goal }}/{{ book.finish_goal }} RUB</h6>
+                <a class="waves-effect waves-light btn" href="{{ book.get_absolute_url }}">View detail</a>
+              </div>
+              <div class="card-reveal">
+                <span class="card-title grey-text text-darken-4">Short description:<i class="material-icons right">&#10006;</i></span>
+                <p>{{ book.description|truncatewords:50 }}...</p>
+                <p>Category: {{ book.category }}</p>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% if page_obj.has_other_pages %}
+<ul class="pagination">
+    {% if page_obj.has_previous %}
+      <li class="active"><a href="?page={{ page_obj.previous_page_number }}"><img src="../../static/icons/icons8-back-16.png"></a></li>
+    {% endif %}
+
+    {% for p in page_obj.paginator.page_range %}
+
+    {% if page_obj.number == p %}
+
+    <li class="active"><a href="#">{{ p }}</a></li>
+
+    {% elif p > page_obj.number|add:-3 and p < page_obj.number|add:3 %}
+    <li class="waves-effect"><a href="?{{ s }}page={{ p }}">{{ p }}</a></li>
+
+    {% endif %}
+    {% endfor %}
+
+    {% if page_obj.has_next %}
+      <li class="active"><a href="?page={{ page_obj.next_page_number }}"><img src="../../static/icons/icons8-forward-16.png"></a></li>
+    {% endif %}
+</ul>
+{% else %}
+<div style="padding-top: 33px;"></div>
+{% endif %}
+
+<script src="../../static/js/materialize.min.js"></script>
+{% endblock content %}

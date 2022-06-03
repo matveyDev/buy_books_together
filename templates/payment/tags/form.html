@@ -1,0 +1,11 @@
+<form action="{% url 'payment' %}" method="POST" style="display: flex; flex-direction: column; justify-content: center; align-items: center;">
+  {% csrf_token %}
+  <div style="background-color: rgb(250, 250, 250); border-radius: 5px; padding: 10px;">
+    <label for="amount">Amount:</label>
+    <input style="max-width: 700px;" type="number" name="amount">
+    <input hidden name="book_pk" value="{{ book_pk }}">
+    <button class="btn waves-effect waves-light" style="width: 120px;" type="submit" name="action">Submit
+      <i class="material-icons right">send</i>
+    </button>
+  </div>
+</form>

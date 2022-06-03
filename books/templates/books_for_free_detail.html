@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+
+{% block title %}
+  {{ book.title }}
+{% endblock title %}
+
+{% block content %}
+  <link rel="stylesheet" href="../../../static/css/materialize.min.css">
+
+<style>
+  .delete-btn {
+    display: flex;
+    background-color: red;
+    border: hidden;
+    border-radius: 5px;
+    width: 30px;
+    height: 30px;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 0 5px red;
+  }
+  .delete-btn:hover {
+    box-shadow: 0 0 7px red;
+    cursor: pointer;
+  }
+  .delete-btn:active {
+    background-color: rgb(255, 72, 0);
+  }
+</style>
+
+  {% if messages %}
+  {% for message in messages %}
+  {% if message.level == DEFAULT_MESSAGE_LEVELS.SUCCESS %}
+  <div class="card-panel teal accent-3">
+    {{ message }}
+  </div>
+  {% else %}
+  <div class="card-panel red darken-4">
+    {{ message }}
+  </div>
+  {% endif %}
+  {% endfor %}
+  {% endif %}
+
+  <div class="col s12 m7" style="background-color: rgb(250, 250, 250);">
+    <h2 class="header">{{ book.title }} |
+      <span style="font-size: 20px; line-height: 0;">views:
+        <span style="width: 20px; border-radius: 9px; background-color: rgb(255, 72, 0);">{{ book.views }}</span>
+      </span>
+    </h2>
+    <div class="card horizontal" id="card">
+      <div class="card-image">
+        <img src="{{ book.image.url }}" id="image" style="max-height: 576px;">
+      </div>
+      <div class="card-stacked">
+        <div class="card-content" style="display: flex; flex-direction: column; justify-content:space-between;">
+          <div>
+            <p style="font-size: 25px;"><span style="font-size: 25px;">Added book:</span>
+              <a href="{{ book.user.get_absolute_url }}">{{ book.user }}</a>
+            </p>
+            <p style="font-size: 20px;"><span style="font-size: 25px;">Description:</span> {{ book.description }}</p>
+          </div>
+          <div style="display: flex;">
+            {% if book.book_file %}
+              <a class="waves-effect waves-light btn-large" href="{{ book.book_file.url }}" target="_blank" style="width: 200px;">
+                <i class="material-icons right">cloud_download</i>Download
+              </a>
+            {% endif %}
+          </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {% if book.get_reviews %}
+    <hr>
+    <h2 style="margin: 0;">Reviews:</h2>
+      {% for review in book.get_reviews %}
+        <div class="row">
+          <div class="col s12 m12">
+            <div class="card teal lighten-2">
+              <div class="card-content white-text">
+                <span class="card-title">
+                  <div style="display: flex; flex-direction: column;">
+                    <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                      <a class="author" href="{{ review.author.get_absolute_url }}"
+                        style="color: white; text-decoration: underline;">
+                      {{ review.author }}:
+                      </a>
+                      {% if user.pk == review.author_id %}
+                        <div style="display: flex; flex-direction: row;">
+                          <form action="{% url 'delete_review' review.id %}" method="POST">{% csrf_token %}
+                            <button class="delete-btn" type="submit"><img src="../../../static/icons/icons8-delete-24.png"></button>
+                          </form>
+                        </div>
+                      {% endif %}
+                    </div>
+                    </span>
+                    <p style="font-size: 19px;">{{ review.text }}</p>
+                  </div>
+
+                {% if review.children.all %}
+                  {% for review_child in review.children.all %}
+                    <div style="margin: 10px 0 0 20px; border-radius: 5px; display: flex; flex-direction: column;" class="teal lighten-1">
+                      <div style="display: flex; flex-direction: row; justify-content: space-between;">
+                        <p style="font-size: 20px; padding-left: 5px;">Answered:
+                          <a
+                            href="{{ review_child.author.get_absolute_url }}"
+                            style="color: white; text-decoration: underline;"
+                          >
+                            {{ review_child.author }}
+                          </a>
+                        </p>
+                          {% if user.pk == review_child.author_id %}
+                            <form 
+                              style="margin: 3px 3px 0 0;"
+                              action="{% url 'delete_review' review_child.id %}" 
+                              method="POST">{% csrf_token %}
+                              <button class="delete-btn" type="submit"><img src="../../../static/icons/icons8-delete-24.png"></button>
+                            </form>
+                          {% endif %}
+                      </div>
+                      <p style="padding-top: 2px; padding-left: 15px; font-size: 19px;">{{ review_child.text }}</p>
+                    </div>
+                  {% endfor %}
+                {% endif %}
+                
+                {% if user.is_authenticated %}
+                <div id='formAnswer' style="margin: 10px 0 0 20px; border-radius: 5px; padding-bottom: 10px;" class="teal lighten-1">
+                  <form action="{% url 'add_review' book.pk %}" method="POST">{% csrf_token %}
+                    <input type="hidden" name="parent" id="parent" value="">
+                    <input type="hidden" name="book" id="book" value="">
+                    <input type="hidden" name="author" id="author" value="{{ user.pk }}">
+                    
+                    <textarea style="padding-left: 5px;" placeholder="Your text..." name="text" id="text" class="materialize-textarea"></textarea>
+                    <button
+                      style="background-color: #009688; margin-left: 10px;" 
+                      class="btn waves-effect waves-light" 
+                      type="submit" 
+                      name="action"
+                      onclick="addReview('{{ review.id }}')"
+                    >
+                      Answer
+                      <i class="material-icons right">send</i>
+                    </button>
+                  </form>
+                </div>
+                {% endif %}
+
+              </div>
+            </div>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+    
+    
+    {% if user.is_authenticated %}
+    <h2 style="margin: 0;">Leave review:</h2>
+      <div class="row">
+        <div class="col s12 m12">
+          <div class="card teal lighten-2">
+            <div class="card-content white-text">
+              <form action="{% url 'add_review' book.pk %}" method="POST">{% csrf_token %}
+                <input type="hidden" name="author" id="author" value="{{ user.pk }}">
+
+                <textarea placeholder="Your text..." name="text" id="text" class="materialize-textarea"></textarea>
+                <button style="background-color: #009688;" class="btn waves-effect waves-light" type="submit" name="action">Send
+                  <i class="material-icons right">send</i>
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  </div>
+
+  <style>
+    .like:hover {
+      box-shadow: 0 0 5px red;
+    }
+  </style>
+
+  <script src="../../../static/js/materialize.min.js"></script>
+
+  <script>
+    const addReview = (id) => {
+      document.getElementById('parent').value = id
+    }
+
+    const addLike = (id) => {
+      document.getElementById('likes').value = true
+    }
+  </script>
+{% endblock content %}
